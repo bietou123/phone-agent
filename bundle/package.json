@@ -1,0 +1,11 @@
+{
+  "name": "phone-agent-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Termux 端桥接服务：封装 Claude Code Agent SDK，为随身 Agent App 提供本地 API",
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "0.3.302",
+    "ws": "^8.18.0"
+  }
+}

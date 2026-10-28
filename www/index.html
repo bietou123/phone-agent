@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#07080c" id="themeColor">
+<meta name="format-detection" content="telephone=no">
+<title>随身 Agent</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="backdrop" aria-hidden="true">
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+  <div class="orb orb-c"></div>
+  <div class="orb orb-d"></div>
+  <div class="noise"></div>
+</div>
+
+<div class="app" id="app">
+
+  <header class="topbar glass" id="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 2.6l2.1 6.2 6.3 2.2-6.3 2.1L12 19.4l-2.1-6.3-6.3-2.1 6.3-2.2L12 2.6z" fill="url(#g1)"/>
+          <defs><linearGradient id="g1" x1="4" y1="2" x2="20" y2="20" gradientUnits="userSpaceOnUse"><stop stop-color="#8b93ff"/><stop offset=".5" stop-color="#c56bff"/><stop offset="1" stop-color="#3fe0ff"/></linearGradient></defs>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">随身</div>
+        <button class="brand-status" id="statusPill" type="button">
+          <span class="dot" id="statusDot"></span>
+          <span id="statusText">检查服务</span>
+        </button>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="btnNew" aria-label="新对话" title="新对话">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <button class="icon-btn" id="btnSettings" aria-label="设置" title="设置">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 15.2a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4z" stroke="currentColor" stroke-width="1.7"/><path d="M19.4 13.5c.06-.5.06-1 0-1.5l1.7-1.3-1.7-3-2.1.8c-.4-.35-.85-.65-1.35-.9L15.7 5.4h-3.4l-.25 2.2c-.5.25-.95.55-1.35.9l-2.1-.8-1.7 3 1.7 1.3c-.06.5-.06 1 0 1.5l-1.7 1.3 1.7 3 2.1-.8c.4.35.85.65 1.35.9l.25 2.2h3.4l.25-2.2c.5-.25.95-.55 1.35-.9l2.1.8 1.7-3-1.7-1.3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="chat" id="chat">
+    <section class="welcome glass" id="welcome">
+      <div class="welcome-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2.6l2.1 6.2 6.3 2.2-6.3 2.1L12 19.4l-2.1-6.3-6.3-2.1 6.3-2.2L12 2.6z" fill="url(#g2)"/><defs><linearGradient id="g2" x1="4" y1="2" x2="20" y2="20" gradientUnits="userSpaceOnUse"><stop stop-color="#8b93ff"/><stop offset=".5" stop-color="#c56bff"/><stop offset="1" stop-color="#3fe0ff"/></linearGradient></defs></svg>
+      </div>
+      <h1>你好，我是随身</h1>
+      <p>跑在你手机里的 Claude Code。<br>聊天、写代码、控制手机、遥控电脑。</p>
+      <div class="chips">
+        <button class="chip" data-prompt="看看我的记忆里最近在忙什么">最近在忙什么</button>
+        <button class="chip" data-prompt="查一下手机电量和网络状态">手机状态</button>
+        <button class="chip" data-prompt="帮我看看工作区里有什么文件">工作区</button>
+      </div>
+    </section>
+    <div class="messages" id="messages"></div>
+    <div class="scroll-anchor" id="scrollAnchor"></div>
+  </main>
+
+  <button class="fab" id="fabScroll" hidden aria-label="回到底部">
+    <svg viewBox="0 0 24 24"><path d="M6 10l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <footer class="composer-wrap" id="composerWrap">
+    <div class="composer glass" id="composer">
+      <textarea id="input" rows="1" placeholder="说点什么…" enterkeyhint="send" autocomplete="off"></textarea>
+      <button class="send" id="btnSend" aria-label="发送">
+        <svg class="i-arrow" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="i-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2.5" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </footer>
+</div>
+
+<!-- 设置 -->
+<div class="overlay sheet-overlay" id="settingsOverlay" hidden>
+  <div class="sheet glass" role="dialog" aria-modal="true">
+    <div class="sheet-grip"></div>
+    <div class="sheet-head">
+      <h2>设置</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="sheet-body">
+
+      <section class="group">
+        <div class="group-title">连接</div>
+        <div class="field">
+          <label for="cfgBaseUrl">API Base URL</label>
+          <input id="cfgBaseUrl" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="https://…">
+        </div>
+        <div class="field">
+          <label for="cfgToken">API Token</label>
+          <div class="input-row">
+            <input id="cfgToken" type="password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="已保存，留空则不修改">
+            <button class="icon-btn small" id="btnToggleToken" aria-label="显示 Token"><svg viewBox="0 0 24 24" fill="none"><path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.6"/></svg></button>
+          </div>
+        </div>
+        <div class="field">
+          <label>模型</label>
+          <button class="picker" id="btnPickModel" type="button">
+            <span id="modelName">-</span>
+            <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="field">
+          <label for="cfgSmallModel">小模型（后台任务）</label>
+          <input id="cfgSmallModel" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="留空则与主模型相同">
+        </div>
+      </section>
+
+      <section class="group">
+        <div class="group-title">运行</div>
+        <div class="field">
+          <label for="cfgWorkdir">工作目录</label>
+          <input id="cfgWorkdir" autocapitalize="off" autocorrect="off" spellcheck="false">
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label for="cfgMaxTurns">最大回合</label>
+            <input id="cfgMaxTurns" type="number" min="1" max="200" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label for="cfgPermission">权限模式</label>
+            <select id="cfgPermission">
+              <option value="bypassPermissions">跳过确认（推荐）</option>
+              <option value="acceptEdits">自动接受编辑</option>
+              <option value="default">每次询问</option>
+              <option value="plan">只做计划</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="group">
+        <div class="group-title">记忆同步</div>
+        <div class="sync-status" id="syncStatus"><span class="skeleton-line"></span></div>
+        <div class="row-btns">
+          <button class="btn" id="btnSyncPull">立即拉取</button>
+          <button class="btn" id="btnSyncPush">立即推送</button>
+        </div>
+      </section>
+
+      <section class="group">
+        <div class="group-title">外观</div>
+        <div class="seg" id="themeSeg">
+          <button data-theme-choice="auto">跟随系统</button>
+          <button data-theme-choice="light">浅色</button>
+          <button data-theme-choice="dark">深色</button>
+          <span class="seg-pill" id="segPill"></span>
+        </div>
+      </section>
+
+      <section class="group">
+        <div class="group-title">服务</div>
+        <div class="service-status" id="serviceStatus">检查中…</div>
+        <div class="row-btns wrap">
+          <button class="btn" id="btnSvcStart">启动服务</button>
+          <button class="btn" id="btnSvcStop">停止服务</button>
+          <button class="btn" id="btnOpenTermux">打开 Termux</button>
+          <button class="btn" id="btnExport">导出安装包</button>
+          <button class="btn" id="btnBattery">电池优化</button>
+          <button class="btn" id="btnReinstall">重装引擎</button>
+        </div>
+      </section>
+
+      <section class="group">
+        <div class="group-title">关于</div>
+        <div class="about" id="aboutInfo">—</div>
+      </section>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn primary block" id="btnSave">保存配置</button>
+    </div>
+  </div>
+</div>
+
+<!-- 模型选择 -->
+<div class="overlay sheet-overlay" id="modelsOverlay" hidden>
+  <div class="sheet glass" role="dialog" aria-modal="true">
+    <div class="sheet-grip"></div>
+    <div class="sheet-head">
+      <h2 id="modelSheetTitle">选择模型</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="model-search">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input id="modelSearch" placeholder="搜索模型…" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="icon-btn small" id="btnReloadModels" aria-label="刷新模型"><svg viewBox="0 0 24 24" fill="none"><path d="M20 11a8 8 0 10-2.3 6.3M20 5v6h-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div class="model-list" id="modelList"></div>
+    <div class="sheet-foot custom-model">
+      <input id="customModel" placeholder="自定义模型 ID" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn primary" id="btnUseCustom">使用</button>
+    </div>
+  </div>
+</div>
+
+<!-- 首次启动向导 -->
+<div class="overlay setup-overlay" id="setupOverlay" hidden>
+  <div class="setup-card glass">
+    <div class="setup-mark">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2.6l2.1 6.2 6.3 2.2-6.3 2.1L12 19.4l-2.1-6.3-6.3-2.1 6.3-2.2L12 2.6z" fill="url(#g3)"/><defs><linearGradient id="g3" x1="4" y1="2" x2="20" y2="20" gradientUnits="userSpaceOnUse"><stop stop-color="#8b93ff"/><stop offset=".5" stop-color="#c56bff"/><stop offset="1" stop-color="#3fe0ff"/></linearGradient></defs></svg>
+    </div>
+    <h1>把引擎装进手机</h1>
+    <p class="setup-sub">App 是脸面，Termux 里跑的是真正的大脑。首次需要几步，之后一键启动。</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-index">1</div>
+        <div class="step-main">
+          <div class="step-title">安装 Termux 与 Termux:API</div>
+          <div class="step-desc">两个都从 F-Droid 安装，不要用 Play 商店版本。</div>
+          <div class="row-btns">
+            <button class="btn small" data-open-url="https://f-droid.org/packages/com.termux/">下载 Termux</button>
+            <button class="btn small" data-open-url="https://f-droid.org/packages/com.termux.api/">下载 Termux:API</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-index">2</div>
+        <div class="step-main">
+          <div class="step-title">允许 App 调用 Termux</div>
+          <div class="step-desc">在 Termux 里粘贴执行下面这行，只做一次。</div>
+          <button class="code-copy" data-copy-text="echo 'allow-external-apps=true' >> ~/.termux/termux.properties">
+            <code>echo 'allow-external-apps=true' >> ~/.termux/termux.properties</code>
+            <span class="copy-tag">复制</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-index">3</div>
+        <div class="step-main">
+          <div class="step-title">导出并安装引擎</div>
+          <div class="step-desc">点导出，再到 Termux 里粘贴执行这条命令。首次约 3–5 分钟。</div>
+          <button class="code-copy" data-copy-text="termux-setup-storage; mkdir -p ~/phone-agent && cd ~/phone-agent && unzip -o ~/storage/downloads/phone-agent.zip && bash install.sh">
+            <code>termux-setup-storage; mkdir -p ~/phone-agent &amp;&amp; cd ~/phone-agent &amp;&amp; unzip -o ~/storage/downloads/phone-agent.zip &amp;&amp; bash install.sh</code>
+            <span class="copy-tag">复制</span>
+          </button>
+          <div class="row-btns">
+            <button class="btn small" id="btnExportSetup">导出安装包</button>
+            <button class="btn small" id="btnOpenTermuxSetup">打开 Termux</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-index">4</div>
+        <div class="step-main">
+          <div class="step-title">启动服务</div>
+          <div class="step-desc">装完点这里，App 会通过 Termux 把服务拉起来。</div>
+          <div class="step-hint" id="startHint"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="setup-actions">
+      <button class="btn primary block big" id="btnStartService">启动服务</button>
+      <div class="row-btns center">
+        <button class="btn ghost" id="btnRetryHealth">重试连接</button>
+        <button class="btn ghost" id="btnBatterySetup">电池白名单</button>
+      </div>
+    </div>
+    <button class="link-btn" id="btnCloseSetup">先看看界面</button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

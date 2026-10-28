@@ -1,0 +1,11 @@
+{
+  "port": 7777,
+  "baseUrl": "https://api.anthropic.com/",
+  "authToken": "",
+  "model": "claude-sonnet-4-5",
+  "smallModel": "claude-sonnet-4-5",
+  "workdir": "~/agent",
+  "memoryRepo": "~/agent-memory",
+  "maxTurns": 60,
+  "permissionMode": "default"
+}

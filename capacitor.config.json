@@ -1,0 +1,20 @@
+{
+  "appId": "top.arrowwood.phoneagent",
+  "appName": "随身Agent",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": true,
+    "webContentsDebuggingEnabled": true
+  },
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 400,
+      "backgroundColor": "#07080c",
+      "showSpinner": false
+    }
+  }
+}

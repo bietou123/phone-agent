@@ -1,0 +1,19 @@
+{
+  "name": "phone-agent",
+  "version": "1.0.0",
+  "description": "随身 Agent — 基于 Termux + Claude Code 的安卓智能体壳",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "cap sync android",
+    "open": "cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.1",
+    "@capacitor/clipboard": "^6.0.2",
+    "@capacitor/core": "^6.2.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.2.1"
+  }
+}
